@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Car, User, Tools, Clock, Receipt, FileText } from "lucide-react";
+import { Car, User, Clock, Receipt, FileText } from "lucide-react";
 
 interface ServiceRecord {
   id: string;

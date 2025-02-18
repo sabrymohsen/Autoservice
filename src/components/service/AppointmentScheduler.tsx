@@ -46,6 +46,7 @@ export default function AppointmentScheduler({
   const [selectedTime, setSelectedTime] = useState<string>();
   const [selectedService, setSelectedService] = useState<string>();
   const [loading, setLoading] = useState(false);
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
   // Available service types
   const serviceTypes = [
@@ -210,7 +211,12 @@ export default function AppointmentScheduler({
               <Label>Select Date</Label>
               <Calendar
                 mode="single"
-                selected={selectedDate}
+                onSelect={(date) => {
+                  setSelectedDate(date);
+                  if (date) {
+                    generateTimeSlots(date).then(setTimeSlots);
+                  }
+                }}
                 onSelect={setSelectedDate}
                 disabled={(date) => {
                   const today = new Date();
@@ -239,26 +245,23 @@ export default function AppointmentScheduler({
                         {service.name} ({service.duration} min)
                       </SelectItem>
                     ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Preferred Time</Label>
                 <Select value={selectedTime} onValueChange={setSelectedTime}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select time slot" />
                   </SelectTrigger>
                   <SelectContent>
-                    {selectedDate &&
-                      generateTimeSlots(selectedDate).then((slots) =>
-                        slots.map((slot) => (
-                          <SelectItem
-                            key={slot.time}
-                            value={slot.time}
-                            disabled={!slot.available}
-                          >
-                            {slot.time}
+                    {timeSlots.map((slot) => (
+                      <SelectItem
+                        key={slot.time}
+                        value={slot.time}
+                        disabled={!slot.available}
+                      >
+                        {slot.time}
+                        {!slot.available && " (Unavailable)"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                             {!slot.available && " (Unavailable)"}
                           </SelectItem>
                         )),
